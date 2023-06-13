@@ -24,13 +24,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.ingeniovirtual.profile.ui.theme.ProfileTheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ProfileTheme {
-                    ProfileScreeen()
+                perfil()
             }
         }
     }
@@ -51,10 +52,11 @@ fun ProfileScreen(){
     Column(modifier = Modifier
         .background(color = when (colportorLevel) {
             ColportorLevel.AVANZADO -> Color(0xFF9E2121)
-            ColportorLevel.INTERMEDIO -> Color(0xFFFBFAFB)
+            ColportorLevel.INTERMEDIO -> Color(0xFF7B94A8)
             ColportorLevel.PRINCIPIANTE -> Color(0xFF99DA44)
         })
-        .clip(shape = RoundedCornerShape(20.dp))
+        .size(450.dp,250.dp)
+        .clip(shape= RoundedCornerShape(50.dp))
         .fillMaxWidth()
         .verticalScroll(rememberScrollState())
         .padding(8.dp),
@@ -70,14 +72,14 @@ fun ProfileScreen(){
                 modifier = Modifier.clickable { perfilp = true },
                 color =  when (colportorLevel) {
                     com.ingeniovirtual.profile.ColportorLevel.AVANZADO -> Color(0xFFFFFFFF)
-                    com.ingeniovirtual.profile.ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
+                    com.ingeniovirtual.profile.ColportorLevel.INTERMEDIO -> Color(0xFFFFFFFF)
                     com.ingeniovirtual.profile.ColportorLevel.PRINCIPIANTE -> Color(0xFF406313)
                 })
             Text(text = "Guardar",
                 modifier = Modifier.clickable { notification.value = "Perfil Guardado" },
                 color =  when (colportorLevel) {
                     com.ingeniovirtual.profile.ColportorLevel.AVANZADO -> Color(0xFFFFFFFF)
-                    com.ingeniovirtual.profile.ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
+                    com.ingeniovirtual.profile.ColportorLevel.INTERMEDIO -> Color(0xFFFFFFFF)
                     com.ingeniovirtual.profile.ColportorLevel.PRINCIPIANTE -> Color(0xFF406313)
                 })
         }
