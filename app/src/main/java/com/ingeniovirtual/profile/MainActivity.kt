@@ -85,9 +85,7 @@ fun ProfileScreen(){
         }
         profileImage()
     }
-    if (perfilp){
-        ProfileScreeen()
-    }
+
 }
 @Composable
 fun profileImage() {

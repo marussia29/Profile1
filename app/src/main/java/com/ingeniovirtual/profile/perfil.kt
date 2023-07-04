@@ -1,5 +1,8 @@
 package com.ingeniovirtual.profile
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,14 +21,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-
+import coil.compose.AsyncImagePainter.State.Empty.painter
+import coil.compose.rememberAsyncImagePainter
+enum class ColportorLevel {
+    AVANZADO,
+    INTERMEDIO,
+    PRINCIPIANTE
+}
 @Preview
 @Composable
 fun perfil() {
@@ -33,6 +42,15 @@ fun perfil() {
     val colportorLevel by remember { mutableStateOf(ColportorLevel.INTERMEDIO) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
     var volveralperfil by remember { mutableStateOf(false) }
+    val imageUri = rememberSaveable { mutableStateOf("") }
+    val painter = rememberAsyncImagePainter(
+        imageUri.value.ifEmpty { R.drawable.person }
+    )
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()){
+            uri: Uri? ->
+        uri?.let { imageUri.value = it.toString() }
+    }
 
 
     Box(
@@ -40,13 +58,14 @@ fun perfil() {
             .fillMaxSize()
             .background(
                 color = when (colportorLevel) {
-                    ColportorLevel.AVANZADO -> Color(0xFFffbf00)
-                    ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
-                    ColportorLevel.PRINCIPIANTE -> Color(0xFF003A08)
-                }),
+                    ColportorLevel.AVANZADO -> Color(0xFFCB9AD4)
+                    ColportorLevel.INTERMEDIO -> Color(0xFFFFFFFF)
+                    ColportorLevel.PRINCIPIANTE -> Color(0xFF88CE92)
+                }
+            ),
         contentAlignment = Alignment.TopCenter
     )
-    { Circle()
+    {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -54,101 +73,152 @@ fun perfil() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column( //TARJETA DE PERFIL
+            Box(
                 modifier = Modifier
-                    .padding(0.dp, 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .fillMaxWidth()
+                    .size(750.dp, 310.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Box(modifier = Modifier     //BOX REDONDO IMAGEN DE PERFIL
-                        .padding(20.dp)
-                        .size(80.dp)
-                        .background(color = Color.White, shape = RoundedCornerShape(50.dp))
-                        .clickable { },
-                        contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Filled.Person,
-                            contentDescription = "icono de perfil",
-                            modifier = Modifier
-                                .size(60.dp))
+                Box(
+                    modifier = Modifier
+                        .size(750.dp, 250.dp)
+                        .background(
+                            color = when (colportorLevel) {
+                                ColportorLevel.AVANZADO -> Color(0xFF49346D)
+                                ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
+                                ColportorLevel.PRINCIPIANTE -> Color(0xFF10831F)
+                            }, RoundedCornerShape(0.dp, 0.dp, 180.dp, 180.dp)
+                        )
+                        .shadow(
+                            1.dp,
+                            RoundedCornerShape(0.dp, 0.dp, 200.dp, 200.dp),
+                            spotColor = when (colportorLevel) {
+                                ColportorLevel.AVANZADO -> Color(0xFF49346D)
+                                ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
+                                ColportorLevel.PRINCIPIANTE -> Color(0xFF10831F)
+                            }
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
 
+                    Box(contentAlignment = Alignment.Center) {
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "¡Hola!",
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold,
+                                color = when (colportorLevel) {
+                                    ColportorLevel.AVANZADO -> Color(0XFFE5C23B)
+                                    ColportorLevel.INTERMEDIO -> Color(0xFFFFFFFF)
+                                    ColportorLevel.PRINCIPIANTE -> Color(0xFFFFFFFF)
+                                },
+                                fontSize = 30.sp,
+                            )
+                            Text(
+                                text = "$nombre",
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold,
+                                color = when (colportorLevel) {
+                                    ColportorLevel.AVANZADO -> Color(0xFFE5C23B)
+                                    ColportorLevel.INTERMEDIO -> Color(0xFFFFFFFF)
+                                    ColportorLevel.PRINCIPIANTE -> Color(0xFFFFFFFF)
+                                },
+                                fontSize = 35.sp,
+                            )
+                        }
                     }
-                    Column() {
-                        Text(
-                            text = "¡Hola!",
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            fontSize = 20.sp,
-                        )
-                        Text(
-                            text = "$nombre",
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            fontSize = 30.sp,
-                        )
+
+                }
+                Box( //TARJETA DE PERFIL
+                    modifier = Modifier
+                        .align(alignment = Alignment.BottomCenter)
+                ) {
+                    Box(
+                        modifier = Modifier     //BOX REDONDO IMAGEN DE PERFIL
+                            .padding(10.dp)
+                            .size(100.dp)
+                            .background(
+                                color = when (colportorLevel) {
+                                    ColportorLevel.AVANZADO -> Color(0xFF49346D)
+                                    ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
+                                    ColportorLevel.PRINCIPIANTE -> Color(0xFF10831F)
+                                }, shape = RoundedCornerShape(100.dp)
+                            )
+                            .clickable { },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Card(
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(100.dp)
+                        ) {
+                            Image(
+                                painter = painter,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .clickable { launcher.launch("image/*") },
+                                contentScale = ContentScale.FillBounds
+                            )
+                        }
                     }
+
                 }
 
             }
+
             //MEDALLAS
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(200.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Image(
-                        painter = painterResource(
-                            id = when (colportorLevel) {
-                                ColportorLevel.AVANZADO -> R.drawable.nivel_3
-                                ColportorLevel.INTERMEDIO -> R.drawable.nivel_2
-                                ColportorLevel.PRINCIPIANTE -> R.drawable.nivel_1
-                            }
-                        ),
-                        contentDescription = null,
-                    )
-                }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                ProgressBarDemo()
+            }
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp, 60.dp),
+                    .padding(5.dp, 60.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp),
+                        .padding(5.dp),
                     contentAlignment = Alignment.BottomStart
                 ) {
                     Button(
                         onClick = { showPrivacyDialog = true },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = when (colportorLevel) {
-                            ColportorLevel.AVANZADO -> Color(0xFF673AB7)
-                            ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
-                            ColportorLevel.PRINCIPIANTE -> Color(0xFF10831F)
-                        }),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = when (colportorLevel) {
+                                ColportorLevel.AVANZADO -> Color(0xFF673AB7)
+                                ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
+                                ColportorLevel.PRINCIPIANTE -> Color(0xFF10831F)
+                            }
+                        ),
                         shape = CircleShape
                     ) {
-                        Text(text = "Política y Privacidad",
+                        Text(
+                            text = "Política y Privacidad",
                             style = MaterialTheme.typography.h6,
                             fontWeight = FontWeight.Medium,
-                            color =  when (colportorLevel) {
+                            color = when (colportorLevel) {
                                 ColportorLevel.AVANZADO -> Color(0xFFFFFFFF)
                                 ColportorLevel.INTERMEDIO -> Color(0xFFFBFAFB)
                                 ColportorLevel.PRINCIPIANTE -> Color(0xFF99DA44)
-                            })
+                            }
+                        )
                     }
                 }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp, 0.dp)
+                        .padding(5.dp, 0.dp)
                         .clickable { },
                     contentAlignment = Alignment.BottomStart
                 ) {
@@ -168,6 +238,7 @@ fun perfil() {
                 }
             }
         }
+    }
         //parte de abrir politica y privacidad
         if (showPrivacyDialog) {
 
@@ -258,7 +329,9 @@ fun perfil() {
                                 ColportorLevel.INTERMEDIO -> Color(0xFF14466D)
                                 ColportorLevel.PRINCIPIANTE -> Color(0xFF10831F)
                             },
-                            modifier = Modifier.padding(10.dp) .clip(shape = RoundedCornerShape(10.dp)),
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .clip(shape = RoundedCornerShape(10.dp)),
                         )
                     }
                 }
@@ -269,24 +342,27 @@ fun perfil() {
         }
     }
 
-}
-
 
 @Composable
-fun Circle(){
-    val colportorLevel by remember { mutableStateOf(ColportorLevel.PRINCIPIANTE) }
+fun ProgressBarDemo() {
+    var progress by remember { mutableStateOf(0.5f) }
 
-    Box(modifier = Modifier
-        .fillMaxSize()){
+    Column(
+        modifier = Modifier.padding(19.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Progreso: ${(progress * 100).toInt()}%", fontWeight = FontWeight.Bold,
+        color = Color(0xff14466D)
+        )
 
-        Box(modifier = Modifier
-            .size(450.dp,380.dp)
-            .background(
-                color = Color.White, RoundedCornerShape(0.dp, 300.dp)
-            )
-            .shadow(500.dp, RoundedCornerShape(0.dp, 550.dp))
-            .align(alignment = Alignment.BottomStart)) {
+        LinearProgressIndicator(progress = progress, color = Color(0xff14466D),
+            modifier = Modifier
+                .size(320.dp, 20.dp)
+                .clip(shape = RoundedCornerShape(20.dp)))
 
-        }
+        Spacer(modifier = Modifier.height(16.dp))
+
     }
 }
+
